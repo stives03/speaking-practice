@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>스피킹 실전 연습</title>
+<meta name="description" content="OPIc 형식 영어 말하기 연습 (개인 학습용)">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1d4f91">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>html{-webkit-text-size-adjust:100%}body{margin:0}</style>
+</head>
+<body>
+
+<style>
+/* 시험실 화면 : 휴대폰 한 열, 위 = 진행 막대, 가운데 = 질문 카드, 아래 = 큰 버튼 */
+:root{
+  --bg:#eef1f4; --card:#ffffff; --fg:#14202b; --mute:#5a6876; --line:#d5dce3; --soft:#e4e9ef;
+  --accent:#1d4f91; --accent-fg:#ffffff; --ok:#1b7a45; --warn:#9a6a00; --bad:#b0352a;
+  --f:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",system-ui,sans-serif;
+  --fe:"Segoe UI",Roboto,"Helvetica Neue",Arial,var(--f);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10161c; --card:#19222b; --fg:#e5ebf1; --mute:#97a5b3; --line:#2c3843; --soft:#222d37;
+  --accent:#7eaef0; --accent-fg:#0d1620; --ok:#5ec68b; --warn:#e2b84f; --bad:#f08b80; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10161c; --card:#19222b; --fg:#e5ebf1; --mute:#97a5b3; --line:#2c3843; --soft:#222d37;
+  --accent:#7eaef0; --accent-fg:#0d1620; --ok:#5ec68b; --warn:#e2b84f; --bad:#f08b80; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f);line-height:1.55;font-size:15px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 48px}
+main{max-width:600px;margin:0 auto;display:grid;gap:12px}
+h1{font-size:1.2rem;margin:0}
+h2{font-size:1.02rem;margin:0}
+h3{font-size:.95rem;margin:0}
+p{margin:0}
+.mute{color:var(--mute)} .sm{font-size:.85rem} .xs{font-size:.78rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:10px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tabs{display:flex;gap:6px}
+.tab{font:inherit;font-size:.85rem;padding:6px 10px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+button{font:inherit;cursor:pointer}
+.btn{padding:12px 14px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);font-weight:600;font-size:1rem}
+.btn.sec{background:var(--card);color:var(--accent)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--mute);font-weight:400;font-size:.9rem;padding:9px 12px}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,.tab:focus-visible,.chip:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:inherit;font-size:.88rem;padding:7px 11px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg)}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);color:var(--accent);font-weight:600}
+.pill{font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.pill.wait{color:var(--warn)} .pill.ok{color:var(--ok)} .pill.mute{color:var(--mute)}
+.phase{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.phase div{font-size:.72rem;text-align:center;padding:5px 2px;border-radius:6px;background:var(--soft);color:var(--mute)}
+.phase div.on{background:var(--accent);color:var(--accent-fg);font-weight:600}
+.big{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums}
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-variant-numeric:tabular-nums}
+.prog{height:6px;background:var(--soft);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent)}
+.qcard{display:grid;gap:14px;justify-items:center;text-align:center;padding:22px 16px}
+.ring{width:132px;height:132px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;background:var(--soft)}
+.ring.play{border-color:var(--accent)}
+.ring.ans{border-color:var(--ok)}
+.state{font-size:.95rem;font-weight:600}
+.meter{width:100%;display:grid;gap:4px}
+.bar{position:relative;height:10px;border-radius:99px;background:var(--soft);overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--warn);border-radius:99px}
+.bar i.ih{background:var(--accent)} .bar i.al{background:var(--ok)}
+.ticks{display:flex;justify-content:space-between;font-size:.7rem;color:var(--mute);font-variant-numeric:tabular-nums}
+.qtext{font-family:var(--fe);text-align:left;font-size:1rem;line-height:1.5;background:var(--soft);border-radius:8px;padding:10px 12px}
+.hint{text-align:left;font-size:.88rem;border-left:3px solid var(--warn);padding:4px 10px;color:var(--fg)}
+.steps{margin:0;padding-left:20px;display:grid;gap:6px}
+.surv{display:grid;gap:12px}
+.surv h3{font-size:.85rem;color:var(--mute);font-weight:600}
+.list{display:grid;gap:8px}
+.item{display:grid;gap:4px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--fg);width:100%}
+.item .top{font-weight:600}
+.kv{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.82rem;color:var(--mute);font-variant-numeric:tabular-nums}
+.kv b{color:var(--fg);font-weight:600}
+.sc{display:flex;flex-wrap:wrap;gap:6px}
+.sc span{font-size:.78rem;padding:2px 8px;border-radius:6px;background:var(--soft)}
+.sc .o{color:var(--ok)} .sc .t{color:var(--warn)} .sc .x{color:var(--bad)}
+.tr{font-family:var(--fe);font-size:.92rem;line-height:1.6;background:var(--soft);border-radius:8px;padding:10px 12px}
+.tr mark{background:transparent;color:var(--bad);text-decoration:underline wavy;text-underline-offset:3px}
+.fix{display:grid;gap:6px;font-family:var(--fe);font-size:.9rem}
+.fix div{display:grid;gap:2px;border-left:3px solid var(--line);padding-left:10px}
+.fix s{color:var(--mute)} .fix span{color:var(--ok)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chart{display:grid;gap:4px;min-width:0}
+.chart svg{width:100%;height:auto;display:block}
+.chart .v{font-size:1.15rem;font-weight:700;font-variant-numeric:tabular-nums}
+.tbl{width:100%;border-collapse:collapse;font-size:.85rem;font-variant-numeric:tabular-nums}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+.tbl td.n{text-align:right}
+.wrap{overflow-x:auto}
+.empty{text-align:center;padding:26px 10px;color:var(--mute)}
+.warnbox{border:1px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:.88rem}
+details summary{cursor:pointer;color:var(--accent);font-size:.9rem}
+@media (max-width:380px){.charts{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<main id="app"></main>
+<audio id="qa" preload="auto"></audio>
+
+<script>
+const BANK = {"topics":[{"code":"self","kind":"self","name":"자기소개"},{"code":"work","kind":"survey","name":"직장"},{"code":"home","kind":"survey","name":"집·동네"},{"code":"movies","kind":"survey","name":"영화 보기"},{"code":"park","kind":"survey","name":"공원 가기"},{"code":"cafe","kind":"survey","name":"카페 가기"},{"code":"beach","kind":"survey","name":"해변 가기"},{"code":"concert","kind":"survey","name":"공연·콘서트 보기"},{"code":"shopping","kind":"survey","name":"쇼핑하기"},{"code":"music","kind":"survey","name":"음악 감상"},{"code":"walking","kind":"survey","name":"걷기·조깅"},{"code":"domtravel","kind":"survey","name":"국내 여행"},{"code":"ovtravel","kind":"survey","name":"해외 여행"},{"code":"homevac","kind":"survey","name":"집에서 보내는 휴가"},{"code":"geography","kind":"unexp","name":"지형·자연"},{"code":"technology","kind":"unexp","name":"산업·기술"},{"code":"weather","kind":"unexp","name":"날씨·계절"},{"code":"fashion","kind":"unexp","name":"패션"},{"code":"recycling","kind":"unexp","name":"재활용"},{"code":"bank","kind":"unexp","name":"은행"},{"code":"hotel","kind":"unexp","name":"호텔"},{"code":"hospital","kind":"unexp","name":"병원·건강"},{"code":"transport","kind":"unexp","name":"교통수단"},{"code":"phone","kind":"unexp","name":"휴대폰·전화"},{"code":"furniture","kind":"unexp","name":"가구"},{"code":"restaurant","kind":"unexp","name":"외식·배달"},{"code":"internet","kind":"unexp","name":"인터넷"},{"code":"holiday","kind":"unexp","name":"명절·기념일"},{"code":"gathering","kind":"unexp","name":"모임·약속"},{"code":"library","kind":"unexp","name":"도서관"},{"code":"rp_movie","kind":"rp","name":"영화표 예매"},{"code":"rp_hotel","kind":"rp","name":"호텔 예약"},{"code":"rp_bank","kind":"rp","name":"은행 계좌"},{"code":"rp_furniture","kind":"rp","name":"가구 구매"},{"code":"rp_travel","kind":"rp","name":"여행 계획"},{"code":"rp_phone","kind":"rp","name":"휴대폰 수리"},{"code":"rp_restaurant","kind":"rp","name":"식당 예약"},{"code":"rp_gym","kind":"rp","name":"운동 시설 등록"},{"code":"rp_concert","kind":"rp","name":"공연 표"},{"code":"rp_work","kind":"rp","name":"업무 상황"}],"qs":[{"id":"self-I1","topic":"self","type":"I","text":"Let's start the interview now. Tell me something about yourself.","hint":""},{"id":"work-D1","topic":"work","type":"D","text":"You indicated in the survey that you work at a company. Tell me about your office. Where is it, what does it look like, and who do you work with?","hint":""},{"id":"work-D2","topic":"work","type":"D","text":"Describe the kind of work you do. What are your main responsibilities, and what does a project usually look like from start to finish?","hint":""},{"id":"work-R1","topic":"work","type":"R","text":"Walk me through a typical workday. What do you do when you first get to the office, and how does your day usually end?","hint":""},{"id":"work-R2","topic":"work","type":"R","text":"How do you usually prepare for an important meeting or presentation at work? Tell me about the steps you go through.","hint":""},{"id":"work-P1","topic":"work","type":"P","text":"Tell me about a time when you faced a serious problem at work. What happened, how did you handle it, and what was the result?","hint":""},{"id":"work-P2","topic":"work","type":"P","text":"Tell me about a project you are proud of. How did it start, what did you do, and how did it turn out?","hint":""},{"id":"work-P3","topic":"work","type":"P","text":"Describe a memorable experience you had with a coworker or manager. What happened, and why do you still remember it?","hint":""},{"id":"work-C1","topic":"work","type":"C","text":"How has the way people work changed compared to when you first started your career? Talk about technology, communication, or anything else that has changed.","hint":""},{"id":"work-S1","topic":"work","type":"S","text":"Many companies now use AI tools at work. What are some concerns people have about this, and how do you think companies should deal with them?","hint":""},{"id":"home-D1","topic":"home","type":"D","text":"You indicated that you live in a house or an apartment. Describe your home to me. What does it look like, and which room do you like the most?","hint":"구조 → 좋아하는 방 → 이유"},{"id":"home-D2","topic":"home","type":"D","text":"Tell me about the neighborhood where you live. What kinds of places are around your home, and what are the people like?","hint":""},{"id":"home-R1","topic":"home","type":"R","text":"What do you usually do at home on weekdays and on weekends? Describe your routine in detail.","hint":""},{"id":"home-R2","topic":"home","type":"R","text":"Who in your family does the housework, and how do you divide the chores? Tell me about a typical cleaning day.","hint":""},{"id":"home-P1","topic":"home","type":"P","text":"Have you ever changed something in your home, such as moving furniture or redecorating a room? Tell me what you did and why.","hint":""},{"id":"home-P2","topic":"home","type":"P","text":"Tell me about a memorable thing that happened in your home. When was it, who was there, and what happened?","hint":""},{"id":"home-C1","topic":"home","type":"C","text":"Compare the home you live in now with a home you lived in when you were younger. What are the differences?","hint":""},{"id":"home-S1","topic":"home","type":"S","text":"Housing prices are a big issue in many countries. What problems do people in your country face when looking for a place to live?","hint":""},{"id":"movies-D1","topic":"movies","type":"D","text":"You indicated that you like watching movies. What kinds of movies do you like, and why do you enjoy them?","hint":""},{"id":"movies-D2","topic":"movies","type":"D","text":"Tell me about a movie theater you often go to. Where is it, and what does it look like inside?","hint":""},{"id":"movies-R1","topic":"movies","type":"R","text":"What do you usually do before and after watching a movie? Walk me through a typical movie day.","hint":""},{"id":"movies-P1","topic":"movies","type":"P","text":"Tell me about the most memorable movie you have seen recently. What was it about, and why did it stay with you?","hint":""},{"id":"movies-P2","topic":"movies","type":"P","text":"Have you ever had an unexpected or funny experience at a movie theater? Tell me what happened from beginning to end.","hint":""},{"id":"movies-C1","topic":"movies","type":"C","text":"How have the movies you like changed over the years? Compare the movies you enjoyed in the past with the ones you like now.","hint":""},{"id":"movies-S1","topic":"movies","type":"S","text":"These days many people watch movies on streaming services instead of going to theaters. How has this changed the movie industry?","hint":""},{"id":"park-D1","topic":"park","type":"D","text":"You indicated that you go to parks. Describe a park you often visit. What does it look like, and what can people do there?","hint":""},{"id":"park-R1","topic":"park","type":"R","text":"What do you usually do when you go to the park? Who do you go with, and how often do you go?","hint":""},{"id":"park-P1","topic":"park","type":"P","text":"Tell me about a memorable experience you had at a park. When was it, and what happened?","hint":""},{"id":"park-P2","topic":"park","type":"P","text":"Tell me about the first time you visited the park you like. How did you find it, and what was your first impression?","hint":""},{"id":"park-C1","topic":"park","type":"C","text":"How have parks in your city changed over the years? Compare parks from your childhood with parks today.","hint":""},{"id":"park-S1","topic":"park","type":"S","text":"What are some problems people complain about at parks, such as noise, trash, or crowds? How should cities handle them?","hint":""},{"id":"cafe-D1","topic":"cafe","type":"D","text":"You indicated that you go to cafes. Tell me about a cafe you like. Where is it, and what makes it special?","hint":""},{"id":"cafe-R1","topic":"cafe","type":"R","text":"What do you usually do at a cafe? Do you go there to work, to meet people, or to relax? Describe a typical visit.","hint":""},{"id":"cafe-P1","topic":"cafe","type":"P","text":"Tell me about a memorable experience you had at a cafe. What happened, and who were you with?","hint":""},{"id":"cafe-C1","topic":"cafe","type":"C","text":"How have cafes changed in your country over the past ten years? Talk about the menu, the design, or the way people use them.","hint":""},{"id":"cafe-S1","topic":"cafe","type":"S","text":"Some cafes now limit how long customers can stay or ban laptops. What do you think about this trend?","hint":""},{"id":"beach-D1","topic":"beach","type":"D","text":"You indicated that you like going to the beach. Describe a beach you have been to. What does it look like?","hint":""},{"id":"beach-R1","topic":"beach","type":"R","text":"What do you usually do when you go to the beach? How do you prepare for the trip?","hint":""},{"id":"beach-P1","topic":"beach","type":"P","text":"Tell me about a memorable trip to the beach. What happened during that trip?","hint":""},{"id":"beach-C1","topic":"beach","type":"C","text":"How have popular beaches in your country changed compared to the past?","hint":""},{"id":"concert-D1","topic":"concert","type":"D","text":"You indicated that you go to concerts. What kinds of concerts or performances do you like, and where do you usually go to see them?","hint":""},{"id":"concert-R1","topic":"concert","type":"R","text":"What do you usually do on the day of a concert? Describe everything from getting tickets to going home.","hint":""},{"id":"concert-P1","topic":"concert","type":"P","text":"Tell me about the most memorable concert or performance you have been to. What made it special?","hint":""},{"id":"concert-C1","topic":"concert","type":"C","text":"How have concerts changed compared to the past? Think about ticket prices, technology, or the audience.","hint":""},{"id":"shopping-D1","topic":"shopping","type":"D","text":"You indicated that you enjoy shopping. Tell me about a store or shopping area you like to visit.","hint":""},{"id":"shopping-R1","topic":"shopping","type":"R","text":"How do you usually shop? Do you make a list, compare prices, or shop online? Describe your habits.","hint":""},{"id":"shopping-P1","topic":"shopping","type":"P","text":"Tell me about a memorable shopping experience, good or bad. What did you buy, and what happened?","hint":""},{"id":"shopping-C1","topic":"shopping","type":"C","text":"Compare shopping in stores with shopping online. How has the way you shop changed over the years?","hint":""},{"id":"music-D1","topic":"music","type":"D","text":"You indicated that you listen to music. What kind of music do you like, and who are your favorite singers or musicians?","hint":""},{"id":"music-R1","topic":"music","type":"R","text":"When and where do you usually listen to music? What devices or apps do you use?","hint":""},{"id":"music-P1","topic":"music","type":"P","text":"Tell me about how you first became interested in music. When was it, and what happened?","hint":""},{"id":"music-P2","topic":"music","type":"P","text":"Tell me about a time when a song had a special meaning for you. What was going on in your life at that time?","hint":""},{"id":"music-C1","topic":"music","type":"C","text":"How has the way people listen to music changed? Compare the past with today.","hint":""},{"id":"music-S1","topic":"music","type":"S","text":"Musicians often say they earn very little from streaming. What do you think about this issue?","hint":""},{"id":"walking-D1","topic":"walking","type":"D","text":"You indicated that you go walking or jogging. Where do you usually go, and what is that place like?","hint":""},{"id":"walking-R1","topic":"walking","type":"R","text":"Describe your walking or jogging routine. When do you go, how long do you exercise, and what do you do before and after?","hint":""},{"id":"walking-P1","topic":"walking","type":"P","text":"Tell me about how you started walking or jogging. Why did you begin, and how has it helped you?","hint":""},{"id":"walking-P2","topic":"walking","type":"P","text":"Have you ever had an unexpected problem while walking or jogging, like bad weather or an injury? What happened?","hint":""},{"id":"walking-C1","topic":"walking","type":"C","text":"How have people's exercise habits changed compared to the past?","hint":""},{"id":"domtravel-D1","topic":"domtravel","type":"D","text":"You indicated that you travel within your country. Tell me about a place in your country you like to visit. What is it like?","hint":""},{"id":"domtravel-R1","topic":"domtravel","type":"R","text":"How do you usually prepare for a domestic trip? Tell me about the things you do before you leave.","hint":""},{"id":"domtravel-P1","topic":"domtravel","type":"P","text":"Tell me about your most memorable domestic trip. Where did you go, who did you go with, and what happened?","hint":""},{"id":"domtravel-P2","topic":"domtravel","type":"P","text":"Tell me about a time when something went wrong during a trip. How did you deal with it?","hint":""},{"id":"domtravel-C1","topic":"domtravel","type":"C","text":"How has domestic travel in your country changed compared to when you were a child?","hint":""},{"id":"domtravel-S1","topic":"domtravel","type":"S","text":"Some popular tourist spots now suffer from too many visitors. What problems does this cause, and what can be done?","hint":""},{"id":"ovtravel-D1","topic":"ovtravel","type":"D","text":"You indicated that you travel abroad. Tell me about a country you have visited. What was it like?","hint":""},{"id":"ovtravel-R1","topic":"ovtravel","type":"R","text":"What do you usually do to get ready for an overseas trip?","hint":""},{"id":"ovtravel-P1","topic":"ovtravel","type":"P","text":"Tell me about a memorable experience you had while traveling in another country.","hint":""},{"id":"ovtravel-C1","topic":"ovtravel","type":"C","text":"Compare traveling abroad now with traveling abroad in the past. What has changed?","hint":""},{"id":"homevac-D1","topic":"homevac","type":"D","text":"You indicated that you like to spend your vacations at home. Who do you usually spend that time with, and what do you like about it?","hint":""},{"id":"homevac-R1","topic":"homevac","type":"R","text":"What do you usually do during a vacation at home? Describe a typical day.","hint":""},{"id":"homevac-P1","topic":"homevac","type":"P","text":"Tell me about a memorable vacation you spent at home. What did you do, and why was it special?","hint":""},{"id":"homevac-C1","topic":"homevac","type":"C","text":"How have the ways people spend their vacations changed recently?","hint":""},{"id":"geography-D1","topic":"geography","type":"D","text":"Tell me about the geography of your country. Are there many mountains, rivers, or beaches? Describe what the land looks like.","hint":""},{"id":"geography-R1","topic":"geography","type":"R","text":"What do people in your country usually do outdoors? How do they enjoy the natural environment?","hint":""},{"id":"geography-P1","topic":"geography","type":"P","text":"Tell me about a memorable experience you had in nature, such as a mountain, a river, or a lake.","hint":""},{"id":"geography-C1","topic":"geography","type":"C","text":"How has the natural environment in your country changed over the years?","hint":""},{"id":"technology-D1","topic":"technology","type":"D","text":"Tell me about a technology that people in your country use every day. What is it, and how do people use it?","hint":""},{"id":"technology-R1","topic":"technology","type":"R","text":"What technology do you use most at work or at home? How do you use it in a typical day?","hint":""},{"id":"technology-P1","topic":"technology","type":"P","text":"Tell me about the first time you used a new piece of technology. What was it, and how did you feel?","hint":""},{"id":"technology-P2","topic":"technology","type":"P","text":"Have you ever had a problem with a device or a program? What happened, and how did you solve it?","hint":""},{"id":"technology-C1","topic":"technology","type":"C","text":"Compare the technology people used ten years ago with the technology they use today.","hint":""},{"id":"technology-S1","topic":"technology","type":"S","text":"Some people worry that technology is replacing human jobs. What industries are most affected, and what do you think about it?","hint":""},{"id":"weather-D1","topic":"weather","type":"D","text":"Describe the weather in your country. What is each season like?","hint":""},{"id":"weather-R1","topic":"weather","type":"R","text":"What do you usually do differently depending on the season?","hint":""},{"id":"weather-P1","topic":"weather","type":"P","text":"Tell me about a time when the weather affected your plans. What happened?","hint":""},{"id":"weather-C1","topic":"weather","type":"C","text":"How has the weather in your country changed compared to when you were young?","hint":""},{"id":"weather-S1","topic":"weather","type":"S","text":"Climate change is a global concern. What changes have people noticed, and what are people doing about it?","hint":""},{"id":"fashion-D1","topic":"fashion","type":"D","text":"Tell me about the fashion in your country. What kinds of clothes do people usually wear?","hint":""},{"id":"fashion-R1","topic":"fashion","type":"R","text":"How do you usually shop for clothes? Where do you go, and how do you decide what to buy?","hint":""},{"id":"fashion-P1","topic":"fashion","type":"P","text":"Tell me about a time when you bought something to wear that you really liked, or really regretted.","hint":""},{"id":"fashion-C1","topic":"fashion","type":"C","text":"How has fashion changed in your country over the years?","hint":""},{"id":"recycling-D1","topic":"recycling","type":"D","text":"Tell me about recycling in your country. What kinds of things do people recycle, and how do they do it?","hint":""},{"id":"recycling-R1","topic":"recycling","type":"R","text":"How does recycling work in your home? Who takes care of it, and when?","hint":""},{"id":"recycling-P1","topic":"recycling","type":"P","text":"Tell me about a time when you had a problem with recycling or trash. What happened?","hint":""},{"id":"recycling-C1","topic":"recycling","type":"C","text":"How have recycling habits changed compared to the past?","hint":""},{"id":"recycling-S1","topic":"recycling","type":"S","text":"Plastic waste is a serious environmental problem. What can individuals and companies do to reduce it?","hint":""},{"id":"bank-D1","topic":"bank","type":"D","text":"Tell me about the banks in your country. What do they look like, and what services do they offer?","hint":""},{"id":"bank-R1","topic":"bank","type":"R","text":"What do you usually do when you go to the bank or use banking apps?","hint":""},{"id":"bank-P1","topic":"bank","type":"P","text":"Tell me about a memorable experience you had at a bank. What happened?","hint":""},{"id":"bank-C1","topic":"bank","type":"C","text":"How has banking changed compared to the past?","hint":""},{"id":"bank-S1","topic":"bank","type":"S","text":"Many bank branches are closing because of mobile banking. Who is affected by this change, and what should banks do?","hint":""},{"id":"hotel-D1","topic":"hotel","type":"D","text":"Tell me about the hotels in your country. What are they usually like?","hint":""},{"id":"hotel-R1","topic":"hotel","type":"R","text":"What do you usually do when you check into a hotel?","hint":""},{"id":"hotel-P1","topic":"hotel","type":"P","text":"Tell me about a memorable hotel stay. What happened?","hint":""},{"id":"hotel-C1","topic":"hotel","type":"C","text":"How have hotels changed compared to the past?","hint":""},{"id":"hospital-D1","topic":"hospital","type":"D","text":"Tell me about a hospital or clinic near your home. What is it like?","hint":""},{"id":"hospital-R1","topic":"hospital","type":"R","text":"What do you do to stay healthy? Describe your habits.","hint":""},{"id":"hospital-P1","topic":"hospital","type":"P","text":"Tell me about a time when you were sick or hurt. What happened, and how did you get better?","hint":""},{"id":"hospital-C1","topic":"hospital","type":"C","text":"How have people's ideas about health changed compared to the past?","hint":""},{"id":"hospital-S1","topic":"hospital","type":"S","text":"Many people say medical costs are too high. What do you think about this issue?","hint":""},{"id":"transport-D1","topic":"transport","type":"D","text":"Tell me about the public transportation in your country. What options do people have?","hint":""},{"id":"transport-R1","topic":"transport","type":"R","text":"How do you usually get to work or to places you go often? Describe your commute.","hint":""},{"id":"transport-P1","topic":"transport","type":"P","text":"Tell me about a memorable experience you had while using public transportation.","hint":""},{"id":"transport-P2","topic":"transport","type":"P","text":"Tell me about a time when you had a problem getting somewhere, like a delay or getting lost. What happened?","hint":""},{"id":"transport-C1","topic":"transport","type":"C","text":"How has transportation in your city changed over the years?","hint":""},{"id":"transport-S1","topic":"transport","type":"S","text":"Traffic congestion is a problem in many cities. What causes it, and what solutions have been tried?","hint":""},{"id":"phone-D1","topic":"phone","type":"D","text":"Tell me about your phone. What kind of phone do you have, and what do you use it for?","hint":""},{"id":"phone-R1","topic":"phone","type":"R","text":"How do you usually use your phone during the day?","hint":""},{"id":"phone-P1","topic":"phone","type":"P","text":"Tell me about a time when you lost or broke your phone. What happened?","hint":""},{"id":"phone-C1","topic":"phone","type":"C","text":"How have phones changed compared to the first phone you had?","hint":""},{"id":"phone-S1","topic":"phone","type":"S","text":"Some people worry that young people spend too much time on their phones. What do you think?","hint":""},{"id":"furniture-D1","topic":"furniture","type":"D","text":"Tell me about the furniture in your home. What is your favorite piece of furniture, and why?","hint":"공부·일하는 의자, 오래 앉아도 편한 이유"},{"id":"furniture-R1","topic":"furniture","type":"R","text":"How do you usually shop for furniture? What do you look for?","hint":""},{"id":"furniture-P1","topic":"furniture","type":"P","text":"Tell me about a time when you bought a new piece of furniture. What happened from shopping to setting it up?","hint":""},{"id":"furniture-C1","topic":"furniture","type":"C","text":"How have furniture styles or the way people buy furniture changed?","hint":""},{"id":"restaurant-D1","topic":"restaurant","type":"D","text":"Tell me about a restaurant you like to go to. Where is it, and what kind of food does it serve?","hint":""},{"id":"restaurant-R1","topic":"restaurant","type":"R","text":"How often do you eat out or order delivery? Describe your habits.","hint":""},{"id":"restaurant-P1","topic":"restaurant","type":"P","text":"Tell me about a memorable meal you had at a restaurant. What made it special?","hint":""},{"id":"restaurant-P2","topic":"restaurant","type":"P","text":"Tell me about a time when you had a problem at a restaurant or with a delivery order. What happened?","hint":""},{"id":"restaurant-C1","topic":"restaurant","type":"C","text":"How has eating out changed compared to the past, especially with delivery apps?","hint":""},{"id":"internet-D1","topic":"internet","type":"D","text":"What do you usually use the internet for? Tell me about the websites or apps you use most.","hint":""},{"id":"internet-R1","topic":"internet","type":"R","text":"Describe how you use the internet on a typical day.","hint":""},{"id":"internet-P1","topic":"internet","type":"P","text":"Tell me about a time when the internet helped you solve a problem.","hint":""},{"id":"internet-S1","topic":"internet","type":"S","text":"What are the dangers of the internet, such as fake news or privacy issues? How should people protect themselves?","hint":""},{"id":"holiday-D1","topic":"holiday","type":"D","text":"Tell me about a holiday that people celebrate in your country. What do people do on that day?","hint":""},{"id":"holiday-R1","topic":"holiday","type":"R","text":"What do you and your family usually do during the holidays?","hint":""},{"id":"holiday-P1","topic":"holiday","type":"P","text":"Tell me about a memorable holiday you spent with your family.","hint":""},{"id":"holiday-C1","topic":"holiday","type":"C","text":"How have the ways people celebrate holidays changed compared to the past?","hint":""},{"id":"gathering-D1","topic":"gathering","type":"D","text":"Tell me about the people you usually meet with, such as friends or family. Where do you usually meet?","hint":""},{"id":"gathering-R1","topic":"gathering","type":"R","text":"How do you usually make plans to meet friends? Describe the process.","hint":""},{"id":"gathering-P1","topic":"gathering","type":"P","text":"Tell me about a time when a plan with friends did not go as expected. What happened?","hint":""},{"id":"gathering-C1","topic":"gathering","type":"C","text":"How has the way people keep in touch with friends changed?","hint":""},{"id":"library-D1","topic":"library","type":"D","text":"Tell me about a library you know. What does it look like, and what do people do there?","hint":""},{"id":"library-R1","topic":"library","type":"R","text":"What do you usually do when you go to a library?","hint":""},{"id":"library-P1","topic":"library","type":"P","text":"Tell me about a memorable experience you had at a library.","hint":""},{"id":"library-C1","topic":"library","type":"C","text":"How have libraries changed with technology?","hint":""},{"id":"rp_movie-RA1","topic":"rp_movie","type":"RA","text":"I'd like to give you a situation and ask you to act it out. You want to see a movie with a friend this weekend. Call the theater and ask three or four questions about the movie.","hint":""},{"id":"rp_movie-RB1","topic":"rp_movie","type":"RB","text":"I'm sorry, but there is a problem. When you arrive at the theater, you find out the tickets you booked are for the wrong day. Explain the situation to the staff and offer two or three alternatives.","hint":""},{"id":"rp_movie-RC1","topic":"rp_movie","type":"RC","text":"That's the end of the situation. Have you ever had a problem with a reservation or a booking? Tell me what happened and how it was solved.","hint":""},{"id":"rp_hotel-RA1","topic":"rp_hotel","type":"RA","text":"You are planning a trip and want to stay at a hotel. Call the hotel and ask three or four questions about the rooms and services.","hint":""},{"id":"rp_hotel-RB1","topic":"rp_hotel","type":"RB","text":"When you check in, the hotel says your reservation is not in the system. Explain the situation and suggest some solutions.","hint":""},{"id":"rp_hotel-RC1","topic":"rp_hotel","type":"RC","text":"Tell me about a time when you had a problem while staying somewhere. What happened?","hint":""},{"id":"rp_bank-RA1","topic":"rp_bank","type":"RA","text":"You want to open a new bank account. Call the bank and ask three or four questions about the account.","hint":""},{"id":"rp_bank-RB1","topic":"rp_bank","type":"RB","text":"You find a strange charge on your bank account that you did not make. Call the bank, explain the problem, and ask what they can do.","hint":""},{"id":"rp_bank-RC1","topic":"rp_bank","type":"RC","text":"Have you ever had a problem with money or a payment? Tell me what happened.","hint":""},{"id":"rp_furniture-RA1","topic":"rp_furniture","type":"RA","text":"You want to buy a new chair for your home office. Go to a furniture store and ask the salesperson three or four questions.","hint":""},{"id":"rp_furniture-RB1","topic":"rp_furniture","type":"RB","text":"The chair you ordered arrives, but it is damaged. Call the store, explain the problem, and offer two or three options to solve it.","hint":""},{"id":"rp_furniture-RC1","topic":"rp_furniture","type":"RC","text":"Have you ever received a damaged or wrong product? Tell me what happened and how it ended.","hint":""},{"id":"rp_travel-RA1","topic":"rp_travel","type":"RA","text":"A friend is planning a trip with you. Call your friend and ask three or four questions about the plan.","hint":""},{"id":"rp_travel-RB1","topic":"rp_travel","type":"RB","text":"On the day of the trip, your flight is cancelled. Call your friend, explain the situation, and suggest some alternatives.","hint":""},{"id":"rp_travel-RC1","topic":"rp_travel","type":"RC","text":"Tell me about a trip when your plans suddenly changed. What happened?","hint":""},{"id":"rp_phone-RA1","topic":"rp_phone","type":"RA","text":"Your phone is not working well. Call a repair shop and ask three or four questions about fixing it.","hint":""},{"id":"rp_phone-RB1","topic":"rp_phone","type":"RB","text":"You pick up your phone from the repair shop, but it still has the same problem. Explain the situation and offer some solutions.","hint":""},{"id":"rp_phone-RC1","topic":"rp_phone","type":"RC","text":"Tell me about a time when something you owned broke at a bad moment. What did you do?","hint":""},{"id":"rp_restaurant-RA1","topic":"rp_restaurant","type":"RA","text":"You want to have dinner with your coworkers at a new restaurant. Call the restaurant and ask three or four questions.","hint":""},{"id":"rp_restaurant-RB1","topic":"rp_restaurant","type":"RB","text":"When you arrive, the restaurant has no record of your reservation and there is a long wait. Explain the situation and suggest alternatives.","hint":""},{"id":"rp_restaurant-RC1","topic":"rp_restaurant","type":"RC","text":"Tell me about a time when a meal or a gathering did not go as planned.","hint":""},{"id":"rp_gym-RA1","topic":"rp_gym","type":"RA","text":"You want to join a gym near your home. Visit the gym and ask three or four questions about membership.","hint":""},{"id":"rp_gym-RB1","topic":"rp_gym","type":"RB","text":"You have to stop going to the gym for a few months because of work. Talk to the manager, explain your situation, and suggest a few options.","hint":""},{"id":"rp_gym-RC1","topic":"rp_gym","type":"RC","text":"Tell me about a time when you had to change your plans because of work.","hint":""},{"id":"rp_concert-RA1","topic":"rp_concert","type":"RA","text":"You want to go to a concert with a friend. Call the ticket office and ask three or four questions.","hint":""},{"id":"rp_concert-RB1","topic":"rp_concert","type":"RB","text":"You are sick on the day of the concert and cannot go. Call your friend, explain the situation, and give two or three alternatives.","hint":""},{"id":"rp_concert-RC1","topic":"rp_concert","type":"RC","text":"Tell me about a time when you could not keep a promise. What happened?","hint":""},{"id":"rp_work-RA1","topic":"rp_work","type":"RA","text":"A new team member is joining your team. Ask them three or four questions to get to know them and their work experience.","hint":""},{"id":"rp_work-RB1","topic":"rp_work","type":"RB","text":"You realize that a report you sent to your manager has a mistake, and the meeting is tomorrow morning. Call your manager, explain the problem, and suggest how to fix it.","hint":""},{"id":"rp_work-RC1","topic":"rp_work","type":"RC","text":"Tell me about a time when you made a mistake at work and had to fix it.","hint":""}]};
+const PWA = true;   // true = 설치형 웹앱판 (기기 음성으로 질문 읽기 · 앱이 직접 녹음 · 파일로 내보내기)
+const APP_NAME = PWA ? "스피킹 실전 연습" : "OPIc 실전 연습";
+const ART_URL = "https://claude.ai/artifact/JXwTztm5qQmh1ye7qKUj7c";
+const T = Object.fromEntries(BANK.topics.map(t => [t.code, t]));
+const QS = BANK.qs, QBY = Object.fromEntries(QS.map(q => [q.id, q]));
+const TYPE_L = { I: "자기소개", D: "묘사", R: "루틴", P: "과거 경험", C: "비교·변화", S: "사회 이슈", RA: "롤플 · 질문하기", RB: "롤플 · 문제 해결", RC: "롤플 · 관련 경험" };
+const SURVEY = [
+  { cat: "직업", one: true, opts: [["work", "회사에 다님", "work"], ["nowork", "일 경험 없음", ""]] },
+  { cat: "학생", one: true, opts: [["nostudent", "학생 아님 (최근 5년 수강 없음)", ""]] },
+  { cat: "거주", one: true, opts: [["family", "가족과 함께 집·아파트", "home"], ["alone", "혼자 사는 집·아파트", "home"]] },
+  { cat: "여가", opts: [["movies", "영화 보기", "movies"], ["park", "공원 가기", "park"], ["cafe", "카페 가기", "cafe"], ["beach", "해변 가기", "beach"], ["concert", "공연·콘서트 보기", "concert"], ["shopping", "쇼핑하기", "shopping"]] },
+  { cat: "취미·관심사", opts: [["music", "음악 감상", "music"]] },
+  { cat: "운동", opts: [["walking", "걷기", "walking"], ["jogging", "조깅", "walking"]] },
+  { cat: "휴가·출장", opts: [["domtravel", "국내 여행", "domtravel"], ["ovtravel", "해외 여행", "ovtravel"], ["homevac", "집에서 보내는 휴가", "homevac"]] },
+];
+const OPT = Object.fromEntries(SURVEY.flatMap(g => g.opts.map(o => [o[0], { label: o[1], topic: o[2], cat: g.cat }])));
+const PRESETS = {
+  mine: { label: "내 이야기", note: "재직·가족과 거주 → 직장 문항이 나옴 (면접 영어와 겹침)", keys: ["work", "nostudent", "family", "movies", "park", "cafe", "music", "walking", "domtravel", "homevac"] },
+  common: { label: "통설 조합", note: "일 경험 없음·혼자 거주 → 문제 범위가 좁음", keys: ["nowork", "nostudent", "alone", "movies", "park", "beach", "concert", "shopping", "music", "walking", "domtravel", "ovtravel", "homevac"] },
+};
+const MODES = {
+  full: { label: "실전 15문항", note: "자기소개 → 콤보 3묶음 → 롤플레이 → 비교·이슈, 7번 뒤 난이도 재선택 · 약 40분" },
+  combo: { label: "콤보 3문항", note: "한 묶음만 (묘사→루틴→경험 / 돌발 / 롤플레이 / 비교·이슈) · 약 8분" },
+  single: { label: "한 문항", note: "고른 유형 한 문항 · 약 3분" },
+};
+const COMBOS = { survey: ["서베이 주제", ["D", "R", "P"]], unexp: ["돌발 주제", ["D", "P", "C"]], rp: ["롤플레이", ["RA", "RB", "RC"]], adv: ["비교·사회 이슈", ["C", "S"]] };
+const FOCUS = { P: "과거 경험", RB: "롤플 문제 해결", C: "비교·변화", S: "사회 이슈", D: "묘사", R: "루틴" };
+// 학습계획.md v001 : 2026-11-02 시작 12주
+const PLAN = [
+  { name: "진단", from: "2026-11-02", to: "2026-11-08", rec: "combo", why: "출발점 기록 : 콤보 1묶음 + 롤플레이" },
+  { name: "오류 깨기", from: "2026-11-09", to: "2026-12-06", rec: "single", why: "매일 한 문항 (과거 경험 위주 → 시제), 주 1회 콤보" },
+  { name: "자동화", from: "2026-12-07", to: "2027-01-03", rec: "combo", why: "스크립트 12주제로 콤보, 같은 질문 다시 녹음해 전후 비교" },
+  { name: "실전", from: "2027-01-04", to: "2027-01-24", rec: "full", why: "실전 15문항 주 2회 → 녹음 전체 채점" },
+];
+
+/* ---------- 저장 (기기별 설정·진행 중 시험은 브라우저, 세트·피드백은 db) ---------- */
+const LS = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }, del(k) { try { localStorage.removeItem(k); } catch (e) {} } };
+const S = Object.assign({ preset: "mine", keys: PRESETS.mine.keys.slice(), level: 5, mode: null, combo: "survey", focus: "P", practice: false, limit5: false }, LS.get("opic-set-v1", {}));
+const saveS = () => LS.set("opic-set-v1", S);
+let RUN = LS.get("opic-run-v1", null);
+const saveRun = () => RUN ? LS.set("opic-run-v1", RUN) : LS.del("opic-run-v1");
+let db = null, SETS = [], dbState = "연결 중", view = "home", detailId = null, tick = null, wake = null;
+
+/* ---------- 날짜·단계 ---------- */
+const pad = n => String(n).padStart(2, "0");
+const ymd = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+function phaseOf(d) { const s = ymd(d); let i = PLAN.findIndex(p => s >= p.from && s <= p.to); if (i < 0) i = s < PLAN[0].from ? 0 : 3; return i; }
+function weekOf(d) { const w = Math.floor((new Date(ymd(d)) - new Date("2026-11-02")) / 864e5 / 7) + 1; return Math.max(1, w); }
+const mmss = ms => { const s = Math.max(0, Math.round(ms / 1000)); return Math.floor(s / 60) + ":" + pad(s % 60); };
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* ---------- 출제 ---------- */
+const rnd = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function pickQ(topic, type, used) { const c = QS.filter(q => q.topic === topic && q.type === type && !used.has(q.id)); if (!c.length) return null; const q = rnd(c); used.add(q.id); return q; }
+const FALL = { C: ["R", "P"], R: ["D"], S: ["C", "P"], P: ["D"] };
+function seq(topic, types, used) {
+  return types.map(t => { let q = pickQ(topic, t, used); for (const f of (FALL[t] || [])) { if (q) break; q = pickQ(topic, f, used); } return q; }).filter(Boolean);
+}
+const surveyTopics = () => [...new Set(S.keys.map(k => OPT[k] && OPT[k].topic).filter(t => t && T[t]))];
+const unexpTopics = () => BANK.topics.filter(t => t.kind === "unexp").map(t => t.code);
+const rpTopics = () => BANK.topics.filter(t => t.kind === "rp").map(t => t.code);
+const has = (topic, type) => QS.some(q => q.topic === topic && q.type === type);
+
+function compose(mode) {
+  const used = new Set(), sv = shuffle(surveyTopics()), ux = shuffle(unexpTopics());
+  let items = [], pool = [];
+  if (mode === "full") {
+    items.push(pickQ("self", "I", used));
+    items.push(...seq(sv[0] || ux.shift(), ["D", "R", "P"], used));
+    const B = sv[1] && Math.random() < 0.6 ? sv[1] : ux.shift();
+    items.push(...seq(B, ["D", "P", "C"], used));
+    items.push(...seq(ux.shift(), ["D", "P", "C"], used));
+    items.push(...seq(rnd(rpTopics()), ["RA", "RB", "RC"], used));
+    pool = [...ux, ...sv.slice(2)];
+  } else if (mode === "combo") {
+    const [, types] = COMBOS[S.combo];
+    const cand = S.combo === "survey" ? sv : S.combo === "unexp" ? ux : S.combo === "rp" ? shuffle(rpTopics()) : shuffle([...ux, ...sv]).filter(t => has(t, "S"));
+    items = seq(cand[0], types, used);
+  } else {
+    const t = S.focus, cand = shuffle([...sv, ...ux, ...(t === "RB" ? rpTopics() : [])]).filter(c => has(c, t));
+    items = [pickQ(cand[0], t, used)];
+  }
+  return { items: items.filter(Boolean).map(q => ({ qid: q.id })), pool, used: [...used] };
+}
+function addTail(level2) {
+  const used = new Set(RUN.used), hard = level2 !== "easy" && RUN.level >= 5;
+  const cand = RUN.pool.filter(t => hard ? has(t, "S") : true);
+  const t = cand[0] || RUN.pool[0];
+  const tail = seq(t, hard ? ["C", "S"] : ["D", "P"], used);
+  RUN.items.push(...tail.map(q => ({ qid: q.id })));
+  RUN.used = [...used]; RUN.level2 = level2;
+}
+
+/* ---------- 화면 ---------- */
+const $app = document.getElementById("app"), A = document.getElementById("qa");
+function nav() {
+  const t = PWA ? [["home", "홈"], ["box", "녹음함"]] : [["home", "홈"], ["records", "기록"], ["trend", "추이"]];
+  return `<div class="top"><h1>${APP_NAME}</h1><div class="tabs">${t.map(([k, l]) => `<button class="tab" data-act="go" data-v="${k}" aria-pressed="${view === k || (k === "records" && view === "detail")}">${l}</button>`).join("")}</div></div>`;
+}
+function render() {
+  clearInterval(tick); tick = null;
+  if (RUN && RUN.phase !== "done" && ["pre", "q", "reselect"].includes(view)) return renderTest();
+  const f = { home: renderHome, survey: renderSurvey, setup: renderSetup, records: renderRecords, detail: renderDetail, trend: renderTrend, end: renderEnd, box: renderBox }[view] || renderHome;
+  $app.innerHTML = f();
+}
+
+function renderHome() {
+  const now = new Date(), pi = phaseOf(now), P = PLAN[pi], wk = weekOf(now);
+  const waiting = SETS.filter(s => s.status === "녹음대기").length;
+  const last = SETS.find(s => s.feedback);
+  const resume = RUN && RUN.phase !== "done" ? `<div class="card warnbox"><p><b>진행 중인 시험이 있습니다</b> (${esc(MODES[RUN.mode].label)} · ${RUN.i + 1}번째 문항)</p><div class="row"><button class="btn" data-act="resume">이어서 하기</button><button class="btn ghost" data-act="abandon">버리기</button></div></div>` : "";
+  return `${nav()}${resume}
+  <section class="card">
+    <div class="top"><h2>${wk}주차 · ${P.name} 단계</h2><span class="sm mute">${esc(P.from.slice(5).replace("-", "/"))}~${esc(P.to.slice(5).replace("-", "/"))}</span></div>
+    <div class="phase">${PLAN.map((p, i) => `<div class="${i === pi ? "on" : ""}">${i + 1} ${p.name}</div>`).join("")}</div>
+    <p class="sm">오늘 추천 : <b>${MODES[P.rec].label}</b> · ${esc(P.why)}</p>
+    <button class="btn" data-act="start" data-v="${P.rec}">${MODES[P.rec].label} 시작</button>
+    <div class="grid2">${Object.keys(MODES).filter(m => m !== P.rec).map(m => `<button class="btn sec" data-act="start" data-v="${m}">${MODES[m].label}</button>`).join("")}</div>
+  </section>
+  <section class="card">
+    <div class="top"><h2>서베이 · 난이도</h2><button class="btn ghost" data-act="go" data-v="survey">바꾸기</button></div>
+    <p class="sm">${esc(PRESETS[S.preset] ? PRESETS[S.preset].label : "직접 고름")} · 주제 ${surveyTopics().length}개 · 자기평가 <b>${S.level}단계</b></p>
+    <p class="xs mute">${surveyTopics().map(t => esc(T[t].name)).join(" · ")}</p>
+  </section>
+  ${PWA ? `<section class="card">
+    <div class="top"><h2>채점</h2><span class="pill ${unsent() ? "wait" : "mute"}">안 보낸 녹음 ${unsent()}</span></div>
+    <p class="sm mute">시험이 끝나면 녹음함에서 '파일로 저장' → Claude 채점 대화에 파일 2개(녹음·세트)를 첨부하고 "오픽 채점해줘". 채점 결과와 주차별 추이는 Claude 아티팩트에 쌓입니다.</p>
+    <a class="btn ghost" href="${ART_URL}" target="_blank" rel="noopener">채점 결과·추이 보기 (Claude)</a>
+    ${recWarn()}
+  </section>` : `<section class="card">
+    <div class="top"><h2>채점</h2><span class="pill ${waiting ? "wait" : "mute"}">채점 대기 ${waiting}</span></div>
+    ${last ? `<p class="sm">최근 채점 ${esc(last.date)} · 추정 <b>${esc(last.feedback.level || "-")}</b></p>${(last.feedback.top3 || []).length ? `<ol class="steps sm">${last.feedback.top3.map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}<button class="btn ghost" data-act="detail" data-v="${esc(last.id)}">자세히</button>` : `<p class="sm mute">시험을 마치면 녹음 파일을 Claude 채팅에 첨부하고 "오픽 채점해줘"라고 보내세요. 결과가 여기와 기록 화면에 뜹니다.</p>`}
+  </section>`}
+  <p class="xs mute">${PWA ? `저장 : 이 휴대폰 (${esc(dbState)})` : `기록 저장 : ${esc(dbState)}`}</p>`;
+}
+
+function renderSurvey() {
+  const on = new Set(S.keys);
+  return `${nav()}
+  <section class="card">
+    <h2>서베이 조합</h2>
+    <div class="grid2">${Object.entries(PRESETS).map(([k, p]) => `<button class="chip" data-act="preset" data-v="${k}" aria-pressed="${S.preset === k}">${p.label}${k === "mine" ? " (기본)" : ""}</button>`).join("")}</div>
+    <p class="xs mute">${esc(PRESETS[S.preset] ? PRESETS[S.preset].note : "직접 고른 조합")}</p>
+  </section>
+  <section class="card surv">
+    ${SURVEY.map(g => `<div class="list"><h3>${g.cat}${g.one ? " (하나)" : ""}</h3><div class="row">${g.opts.map(o => `<button class="chip" data-act="opt" data-v="${o[0]}" aria-pressed="${on.has(o[0])}">${o[1]}</button>`).join("")}</div></div>`).join("")}
+    <p class="xs mute">실제 시험은 여가·취미·운동·휴가에서 12개 이상 골라야 넘어갑니다. 여기서는 문제가 준비된 항목만 보여 줍니다.</p>
+  </section>
+  <section class="card">
+    <h2>자기평가 난이도</h2>
+    <div class="row">${[3, 4, 5, 6].map(n => `<button class="chip" data-act="level" data-v="${n}" aria-pressed="${S.level === n}">${n}단계</button>`).join("")}</div>
+    <p class="xs mute">AL 목표는 5~6단계. 5·6단계는 14~15번에 비교·사회 이슈 문항이 나옵니다.</p>
+  </section>
+  <section class="card">
+    <h2>연습 도우미</h2>
+    <div class="row"><button class="chip" data-act="toggle" data-v="practice" aria-pressed="${S.practice}">질문 글·소재 힌트 보기</button>
+    <button class="chip" data-act="toggle" data-v="limit5" aria-pressed="${S.limit5}">다시 듣기는 5초 안에만</button></div>
+    <p class="xs mute">실전처럼 하려면 둘 다 끄기 (실제 시험엔 질문 글이 없음). '5초 안에만'은 공식 확인이 안 된 규칙이라 기본은 꺼 둠.</p>
+  </section>
+  <button class="btn" data-act="go" data-v="home">저장하고 홈으로</button>`;
+}
+
+function renderSetup() {
+  const m = S.mode;
+  let extra = "";
+  if (m === "combo") extra = `<div class="row">${Object.entries(COMBOS).map(([k, c]) => `<button class="chip" data-act="combo" data-v="${k}" aria-pressed="${S.combo === k}">${c[0]}</button>`).join("")}</div>`;
+  if (m === "single") extra = `<div class="row">${Object.entries(FOCUS).map(([k, l]) => `<button class="chip" data-act="focus" data-v="${k}" aria-pressed="${S.focus === k}">${l}</button>`).join("")}</div>`;
+  return `${nav()}
+  <section class="card">
+    <h2>${MODES[m].label}</h2>
+    <p class="sm mute">${MODES[m].note}</p>
+    ${extra}
+  </section>
+  ${PWA ? `<section class="card">
+    <h2>시작 전에</h2>
+    <ol class="steps sm">
+      <li>처음 한 번 <b>마이크 허용</b>을 묻습니다.</li>
+      <li>질문은 휴대폰 음성이 영어로 읽어 줍니다. 다 읽으면 바로 답변을 시작하세요. 녹음은 시작부터 끝까지 자동으로 됩니다.</li>
+      <li>조용한 곳에서 화면을 켜 둔 채로 하세요. 이어폰도 됩니다.</li>
+      <li>끝나면 녹음함에서 '파일로 저장' → Claude 채점 대화에 첨부하며 "오픽 채점해줘".</li>
+    </ol>
+    ${recWarn()}
+  </section>
+  <button class="btn" data-act="begin">시작</button>` : `<section class="card">
+    <h2>시작 전에</h2>
+    <ol class="steps sm">
+      <li>휴대폰 <b>녹음기 앱</b>을 열어 녹음을 시작합니다.</li>
+      <li>이 화면으로 돌아와 아래 버튼을 누릅니다. 녹음은 끝까지 한 파일로 이어지게 둡니다.</li>
+      <li><b>이어폰 없이 스피커로</b> 들으면 질문도 같이 녹음돼서 문항 나누기가 정확해집니다.</li>
+      <li>끝나면 녹음을 멈추고, 파일을 Claude 채팅에 첨부하며 "오픽 채점해줘".</li>
+    </ol>
+  </section>
+  <button class="btn" data-act="begin">녹음 켰어요 · 시작</button>`}
+  <button class="btn ghost" data-act="go" data-v="home">돌아가기</button>`;
+}
+
+/* ---------- 시험 진행 ---------- */
+const now = () => Date.now() - RUN.t0;
+function startRun() {
+  const c = compose(S.mode), d = new Date();
+  RUN = { id: ymd(d).replace(/-/g, "").slice(2) + "-" + pad(d.getHours()) + pad(d.getMinutes()), mode: S.mode, level: S.level, level2: null,
+    preset: S.preset, topics: surveyTopics(), combo: S.mode === "combo" ? S.combo : null, focus: S.mode === "single" ? S.focus : null,
+    practice: S.practice, t0: Date.now(), startedAt: d.toISOString(), items: c.items, pool: c.pool, used: c.used, i: 0, phase: "q", log: {}, parts: [] };
+  if (PWA) {
+    saveRun();
+    recStart().then(() => { view = "q"; askWake(); render(); play(false); })
+      .catch(e => { RUN = null; saveRun(); recErr = micMsg(e); view = "setup"; render(); });
+    return;
+  }
+  saveRun(); view = "q"; askWake(); render();
+}
+function cur() { return RUN.items[RUN.i]; }
+function play(isReplay) {
+  const it = cur();
+  if (isReplay) it.replayAt = now(); else it.playAt = now();
+  it.playing = true; saveRun();
+  const done = () => { if (cur() !== it || !it.playing) return; it.playing = false; if (isReplay) it.replayEnd = now(); else it.playEnd = now(); saveRun(); renderTest(); };
+  const fail = () => { if (cur() !== it) return; it.playing = false; it.audioErr = true; saveRun(); renderTest(); };
+  if (PWA) { say(QBY[it.qid].text, done, fail); return renderTest(); }
+  A.src = "audio/" + it.qid + ".mp3";
+  A.onended = done; A.onerror = fail;
+  A.play().catch(() => { it.playing = false; it.needTap = true; saveRun(); renderTest(); });
+  renderTest();
+}
+function stopVoice() { A.pause(); try { window.speechSynthesis && speechSynthesis.cancel(); } catch (e) {} }
+function next() {
+  const it = cur(); stopVoice(); it.playing = false; it.nextAt = now();
+  if (RUN.mode === "full" && RUN.i === 6 && !RUN.level2) { RUN.phase = "reselect"; saveRun(); view = "reselect"; return renderTest(); }
+  if (RUN.i + 1 >= RUN.items.length) return finish();
+  RUN.i++; saveRun(); play(false);
+}
+function renderTest() {
+  clearInterval(tick); tick = null;
+  if (RUN.phase === "reselect") {
+    $app.innerHTML = `<section class="card"><h2>난이도 다시 고르기</h2><p class="sm mute">실제 시험처럼 7번 뒤 남은 문항의 난이도를 고릅니다.</p>
+      <div class="list">${[["easy", "쉬운 질문"], ["same", "비슷한 질문"], ["hard", "어려운 질문"]].map(([k, l]) => `<button class="btn ${k === "hard" ? "" : "sec"}" data-act="level2" data-v="${k}">${l}</button>`).join("")}</div>
+      <p class="xs mute">AL 목표면 '어려운 질문' → 14~15번 비교·사회 이슈</p></section>`;
+    return;
+  }
+  const it = cur(), q = QBY[it.qid], n = RUN.items.length + (RUN.mode === "full" && !RUN.level2 ? 2 : 0);
+  const heard = it.playEnd != null, replayUsed = it.replayAt != null;
+  const tooLate = S.limit5 && heard && !replayUsed && (now() - it.playEnd > 5000);
+  const ansFrom = it.replayEnd != null && it.replayEnd > (it.playEnd || 0) ? it.replayEnd : it.playEnd;
+  const st = it.playing ? ["play", "질문 듣는 중"] : !heard ? ["", it.needTap ? "눌러서 질문 듣기" : "질문 듣기"] : ["ans", "답변 중"];
+  const total = RUN.mode === "full" ? `<span class="sm mute">남은 시간 <b id="tt">${mmss(40 * 60e3 - now())}</b></span>` : `<span class="sm mute">경과 <b id="tt">${mmss(now())}</b></span>`;
+  $app.innerHTML = `
+  <div class="qhead"><b>Q${RUN.i + 1} <span class="mute">/ ${n}</span></b>${total}</div>
+  <div class="prog"><i style="width:${(RUN.i / n * 100).toFixed(1)}%"></i></div>
+  <section class="card qcard">
+    <p class="xs mute">${esc(TYPE_L[q.type])}${RUN.practice ? " · " + esc(T[q.topic].name) : ""}</p>
+    <button class="ring ${st[0]}" data-act="${heard || it.playing ? "" : "play"}" aria-label="질문 듣기"><span><span class="big" id="at">${heard ? mmss(now() - ansFrom) : it.playing ? "♪" : "▶"}</span><br><span class="state">${st[1]}</span></span></button>
+    ${heard ? meter(now() - ansFrom) : ""}
+    ${it.audioErr ? `<p class="sm" style="color:var(--bad)">질문 음성을 못 불러왔습니다. 연습 도우미에서 질문 글을 켜고 읽어 주세요.</p><p class="qtext">${esc(q.text)}</p>` : ""}
+    ${RUN.practice && heard ? `<details><summary>질문 글 보기</summary><p class="qtext">${esc(q.text)}</p></details>${q.hint ? `<p class="hint">소재 : ${esc(q.hint)}</p>` : ""}` : ""}
+  </section>
+  <div class="grid2">
+    <button class="btn sec" data-act="replay" ${!heard || replayUsed || it.playing || tooLate ? "disabled" : ""}>${replayUsed ? "다시 듣기 씀" : "다시 듣기 (1회)"}</button>
+    <button class="btn" data-act="next" ${!heard && !it.audioErr ? "disabled" : ""}>${RUN.i + 1 >= RUN.items.length && (RUN.mode !== "full" || RUN.level2) ? "끝내기" : "다음"}</button>
+  </div>
+  <button class="btn ghost" data-act="quit">그만두기</button>`;
+  if (heard && !it.playing) tick = setInterval(() => {
+    const a = document.getElementById("at"), t = document.getElementById("tt");
+    if (a) a.textContent = mmss(now() - ansFrom);
+    if (t) t.textContent = RUN.mode === "full" ? mmss(40 * 60e3 - now()) : mmss(now());
+    const m = document.getElementById("mt"); if (m) m.outerHTML = meter(now() - ansFrom);
+    if (S.limit5 && !replayUsed && now() - it.playEnd > 5000 && now() - it.playEnd < 5400) renderTest();
+  }, 500);
+}
+function meter(ms) {
+  const s = ms / 1000, w = Math.min(100, s / 150 * 100), cls = s >= 90 ? "al" : s >= 60 ? "ih" : "";
+  const lab = s < 60 ? "짧음 (IM 수준)" : s < 90 ? "1분 넘김 (IH 길이)" : s <= 150 ? "AL 길이 (1분 30초~2분)" : "충분 · 마무리 문장으로 끝내기";
+  return `<div class="meter" id="mt"><div class="bar"><i class="${cls}" style="width:${w.toFixed(1)}%"></i></div><div class="ticks"><span>0</span><span>1:00</span><span>1:30</span><span>2:00</span><span>2:30</span></div><p class="xs mute">${lab}</p></div>`;
+}
+async function finish() {
+  RUN.phase = "done"; RUN.endedAt = now(); saveRun(); releaseWake();
+  if (PWA) {
+    view = "end"; packing = true; render();
+    try { await recStop(); lastPacked = await packRun(RUN); } catch (e) { dbState = "저장 실패 : " + e.message; }
+    packing = false; RUN = null; saveRun(); await loadBox(); render(); return;
+  }
+  const set = toSet(RUN); pending(set); view = "end"; render();
+  await syncPending();
+  render();
+}
+function toSet(r) {
+  const d = new Date(r.startedAt);
+  return { id: r.id, date: ymd(d), week: weekOf(d), phase: PLAN[phaseOf(d)].name, mode: r.mode, modeLabel: MODES[r.mode].label,
+    combo: r.combo, focus: r.focus, level: r.level, level2: r.level2, preset: r.preset, topics: r.topics, startedAt: r.startedAt,
+    durationSec: Math.round((r.endedAt || 0) / 1000), status: "녹음대기", device: /; wv\)|Claude\//.test(navigator.userAgent) ? "Claude 앱" : "브라우저",
+    items: r.items.map((it, k) => { const q = QBY[it.qid]; return { n: k + 1, qid: it.qid, type: q.type, topic: q.topic, text: q.text,
+      playAt: it.playAt ?? null, playEnd: it.playEnd ?? null, replayAt: it.replayAt ?? null, replayEnd: it.replayEnd ?? null, nextAt: it.nextAt ?? null }; }) };
+}
+let MEMP = [];  // 브라우저 저장이 막힌 기기용 대기열
+const getP = () => LS.get("opic-pending-v1", null) || MEMP;
+const setP = p => { MEMP = p; LS.set("opic-pending-v1", p); };
+function pending(set) { const p = getP().filter(x => x.id !== set.id); p.push(set); setP(p); }
+async function syncPending() {
+  if (!db) return;
+  const p = getP(), left = [];
+  for (const s of p) { try { await db.collection("sets").doc(s.id).set(s); } catch (e) { left.push(s); dbState = "저장 실패 : " + (e.code || e.message); } }
+  setP(left);
+}
+function renderEnd() {
+  if (PWA) {
+    const r = lastPacked;
+    return `${nav()}<section class="card">
+      <h2>수고하셨습니다</h2>
+      ${packing ? `<p class="sm">녹음 저장 중…</p>` : r ? `<p class="kv"><span>세트 <b>${esc(r.id)}</b></span><span>${r.set.items.length}문항</span><span>${mmss(r.set.durationSec * 1000)}</span><span>${mb(r)} MB</span></p>
+      <ol class="steps sm"><li>'파일로 저장'을 누르면 녹음과 세트 파일 2개가 휴대폰 다운로드 폴더에 저장됩니다.</li><li>Claude 앱의 Claude 채점 대화에서 두 파일을 첨부하고 "오픽 채점해줘".</li></ol>
+      <button class="btn" data-act="save" data-v="${esc(r.id)}">파일로 저장</button>
+      <button class="btn sec" data-act="share" data-v="${esc(r.id)}">공유하기 (드라이브·메신저 등)</button>` : `<p class="sm" style="color:var(--bad)">녹음을 저장하지 못했습니다. ${esc(dbState)}</p>`}
+    </section><button class="btn ghost" data-act="go" data-v="home">홈으로</button>`;
+  }
+  const left = getP().length, id = RUN ? RUN.id : "";
+  return `${nav()}<section class="card">
+    <h2>수고하셨습니다</h2>
+    <p class="sm">세트 <b>${esc(id)}</b> · ${left ? `<span style="color:var(--warn)">기록 저장 대기 (${left}) — 연결되면 자동 저장</span>` : `<span style="color:var(--ok)">기록 저장됨</span>`}</p>
+    <ol class="steps sm"><li>녹음기 앱에서 녹음을 멈춥니다.</li><li>Claude 앱의 Claude 채점 대화에 녹음 파일을 첨부합니다.</li><li>"오픽 채점해줘" 라고 보냅니다. (세트가 여러 개면 "${esc(id)}" 도 같이)</li></ol>
+    <p class="xs mute">채점이 끝나면 기록 화면에 문항별 받아쓰기·피드백이 뜹니다.</p>
+  </section><button class="btn" data-act="endhome">홈으로</button>`;
+}
+
+/* ---------- 기록 ---------- */
+function setLine(s) {
+  const f = s.feedback;
+  return `<button class="item" data-act="detail" data-v="${esc(s.id)}"><span class="top"><span>${esc(s.date)} · ${esc(s.modeLabel || s.mode)}</span><span class="pill ${s.status === "채점완료" ? "ok" : "wait"}">${esc(s.status)}</span></span>
+    <span class="kv"><span>세트 <b>${esc(s.id)}</b></span><span>${(s.items || []).length}문항</span><span>${esc(s.phase)} 단계</span>${f ? `<span>추정 <b>${esc(f.level || "-")}</b></span>` : ""}</span></button>`;
+}
+function renderRecords() {
+  const p = getP();
+  return `${nav()}
+  ${p.length ? `<div class="card warnbox sm">이 기기에 저장 대기 중인 세트 ${p.length}개 · 연결되면 자동 저장</div>` : ""}
+  <div class="list">${SETS.length ? SETS.map(setLine).join("") : `<div class="card empty">아직 기록이 없습니다.<br>홈에서 시험을 시작하면 세트가 여기에 쌓입니다.</div>`}</div>`;
+}
+const SCL = { len: "길이", tense: "시제", para: "문단", conn: "연결어", task: "과제" };
+const scc = v => v === "○" ? "o" : v === "△" ? "t" : v === "✕" ? "x" : "";
+function renderDetail() {
+  const s = SETS.find(x => x.id === detailId);
+  if (!s) return `${nav()}<div class="card empty">세트를 찾을 수 없습니다.</div>`;
+  const f = s.feedback || {}, fi = Object.fromEntries((f.items || []).map(x => [x.n, x]));
+  return `${nav()}
+  <section class="card">
+    <div class="top"><h2>${esc(s.date)} · ${esc(s.modeLabel || s.mode)}</h2><span class="pill ${s.status === "채점완료" ? "ok" : "wait"}">${esc(s.status)}</span></div>
+    <p class="kv"><span>세트 <b>${esc(s.id)}</b></span><span>난이도 <b>${s.level}${s.level2 ? " → " + ({ easy: "쉽게", same: "비슷하게", hard: "어렵게" }[s.level2]) : ""}</b></span><span>${esc(s.phase)} 단계</span></p>
+    ${s.feedback ? `<p>추정 등급 <b>${esc(f.level || "-")}</b></p>${f.summary ? `<p class="sm">${esc(f.summary)}</p>` : ""}${(f.top3 || []).length ? `<h3>가장 먼저 고칠 것</h3><ol class="steps sm">${f.top3.map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}`
+      : `<p class="sm mute">녹음 파일을 Claude 채팅에 첨부하고 "오픽 채점해줘 ${esc(s.id)}" 라고 보내면 채점됩니다.</p>`}
+  </section>
+  ${(s.items || []).map(it => { const x = fi[it.n]; return `<section class="card">
+    <div class="top"><h3>Q${it.n} · ${esc(TYPE_L[it.type] || it.type)}</h3><span class="xs mute">${esc((T[it.topic] || {}).name || "")}</span></div>
+    <details><summary>질문</summary><p class="qtext">${esc(it.text)}</p></details>
+    ${x ? `<p class="kv"><span>답변 <b>${x.sec != null ? mmss(x.sec * 1000) : "-"}</b></span><span>단어 <b>${x.words ?? "-"}</b></span><span>분당 <b>${x.wpm ?? "-"}</b></span><span>2초+ 멈춤 <b>${x.pauses ?? "-"}</b></span></p>
+      ${x.scores ? `<div class="sc">${Object.entries(SCL).map(([k, l]) => x.scores[k] ? `<span class="${scc(x.scores[k])}">${l} ${esc(x.scores[k])}</span>` : "").join("")}</div>` : ""}
+      ${x.transcript ? `<div class="tr">${esc(x.transcript).replace(/\[\[(.+?)\]\]/g, "<mark>$1</mark>")}</div>` : ""}
+      ${x.good ? `<p class="sm"><b>좋았던 점</b> ${esc(x.good)}</p>` : ""}
+      ${(x.fixes || []).length ? `<div class="fix">${x.fixes.map(z => `<div><s>${esc(z.from)}</s><span>${esc(z.to)}</span>${z.why ? `<em class="xs mute">${esc(z.why)}</em>` : ""}</div>`).join("")}</div>` : ""}
+      ${(x.pron || []).length ? `<p class="sm"><b>발음 확인</b> ${x.pron.map(esc).join(" · ")}</p>` : ""}
+      ${x.model ? `<details><summary>모범 답안</summary><p class="qtext">${esc(x.model)}</p></details>` : ""}` : `<p class="xs mute">채점 전</p>`}
+  </section>`; }).join("")}`;
+}
+
+/* ---------- 추이 ---------- */
+function weekly() {
+  const g = {};
+  SETS.filter(s => s.feedback && s.feedback.stats).forEach(s => { (g[s.week] = g[s.week] || []).push(s); });
+  return Object.keys(g).map(Number).sort((a, b) => a - b).map(w => {
+    const a = g[w], avg = k => { const v = a.map(s => s.feedback.stats[k]).filter(x => typeof x === "number"); return v.length ? v.reduce((p, c) => p + c, 0) / v.length : null; };
+    return { w, n: a.length, sec: avg("avgSec"), words: avg("avgWords"), wpm: avg("avgWpm"), pause: avg("pausesPerQ"), tense: avg("tenseErrPerQ"), conn: avg("connKinds"), lv: avg("levelNum") };
+  });
+}
+function spark(rows, key, fmt, goodUp) {
+  const pts = rows.filter(r => r[key] != null);
+  if (!pts.length) return `<p class="xs mute">자료 없음</p>`;
+  const W = 160, H = 56, P = 6, xs = pts.map(r => r.w), ys = pts.map(r => r[key]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const X = w => x1 === x0 ? W / 2 : P + (w - x0) / (x1 - x0) * (W - 2 * P), Y = v => y1 === y0 ? H / 2 : H - P - (v - y0) / (y1 - y0) * (H - 2 * P);
+  const d = pts.map((r, i) => (i ? "L" : "M") + X(r.w).toFixed(1) + " " + Y(r[key]).toFixed(1)).join(" ");
+  const last = pts[pts.length - 1], first = pts[0], up = last[key] - first[key];
+  const col = pts.length < 2 || Math.abs(up) < 1e-9 ? "var(--mute)" : (up > 0) === goodUp ? "var(--ok)" : "var(--bad)";
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="주차별 추이"><line x1="0" x2="${W}" y1="${H - 1}" y2="${H - 1}" stroke="var(--line)"/><path d="${d}" fill="none" stroke="${col}" stroke-width="2"/>${pts.map(r => `<circle cx="${X(r.w).toFixed(1)}" cy="${Y(r[key]).toFixed(1)}" r="${r === last ? 3.5 : 2}" fill="${r === last ? col : "var(--mute)"}"/>`).join("")}</svg>
+    <span class="xs mute">${first.w}주 ${fmt(first[key])} → ${last.w}주 ${fmt(last[key])}</span>`;
+}
+const LV = ["", "NL", "NM", "NH", "IL", "IM1", "IM2", "IM3", "IH", "AL"];
+function renderTrend() {
+  const rows = weekly(), lastR = rows[rows.length - 1];
+  const errs = {};
+  SETS.filter(s => s.feedback && s.feedback.errors).forEach(s => s.feedback.errors.forEach(e => { const k = e.no + "|" + e.label; (errs[k] = errs[k] || {})[s.week] = ((errs[k] || {})[s.week] || 0) + (e.count || 0); }));
+  const wks = rows.map(r => r.w), ek = Object.keys(errs).sort((a, b) => +a.split("|")[0] - +b.split("|")[0]);
+  const f1 = v => v == null ? "-" : (Math.round(v * 10) / 10).toString(), fs = v => v == null ? "-" : mmss(v * 1000), fl = v => v == null ? "-" : LV[Math.round(v)] || "-";
+  const C = [["추정 등급", "lv", fl, true], ["평균 답변 시간", "sec", fs, true], ["평균 단어 수", "words", f1, true], ["분당 단어", "wpm", f1, true], ["2초+ 멈춤 / 문항", "pause", f1, false], ["시제 실수 / 문항", "tense", f1, false], ["연결어 종류", "conn", f1, true]];
+  return `${nav()}
+  <section class="card"><h2>주차별 변화</h2>
+    ${rows.length ? `<div class="charts">${C.map(([l, k, f, g]) => `<div class="chart"><span class="xs mute">${l}</span><span class="v">${f(lastR[k])}</span>${spark(rows, k, f, g)}</div>`).join("")}</div>
+    <p class="xs mute">채점된 세트를 주차별로 평균. 초록 = 좋아지는 방향, 빨강 = 나빠지는 방향.</p>` : `<div class="empty">채점된 세트가 쌓이면 주차별 그래프가 나옵니다.</div>`}
+  </section>
+  <section class="card"><h2>반복 실수 (교정기록 Top 10)</h2>
+    ${ek.length ? `<div class="wrap"><table class="tbl"><thead><tr><th>오류</th>${wks.map(w => `<th class="n">${w}주</th>`).join("")}</tr></thead><tbody>${ek.map(k => `<tr><td>${esc(k.split("|")[0])}. ${esc(k.split("|").slice(1).join("|"))}</td>${wks.map(w => `<td class="n">${errs[k][w] || 0}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+    <p class="xs mute">졸업 기준 : 2주 연속 0회</p>` : `<p class="sm mute">채점하면서 반복 실수가 확정되면 주차별 횟수가 여기에 쌓입니다.</p>`}
+  </section>`;
+}
+
+/* ---------- 웹앱판 : 질문 음성(기기 TTS) · 녹음 · 녹음함 ---------- */
+let VOICE = null, voicesReady = false, recErr = "", packing = false, lastPacked = null, BOX = [], confirmDel = null;
+function pickVoice() {
+  if (!window.speechSynthesis) return;
+  const all = speechSynthesis.getVoices(), us = all.filter(v => /^en[-_]US/i.test(v.lang));
+  VOICE = us.find(v => /google/i.test(v.name) && v.localService) || us.find(v => v.localService) || us[0] || all.find(v => /^en/i.test(v.lang)) || null;
+  if (all.length) voicesReady = true;
+}
+function say(text, done, fail) {
+  if (!window.speechSynthesis || (voicesReady && !VOICE)) return fail();   // 영어 음성 없음 → 질문 글로 대신
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US"; if (VOICE) u.voice = VOICE; u.rate = 0.95;
+  let fin = false;
+  const end = ok => { if (fin) return; fin = true; clearTimeout(g); ok ? done() : fail(); };
+  const g = setTimeout(() => end(true), 5000 + text.split(/\s+/).length * 650);   // onend 가 안 오는 기기 대비
+  u.onend = () => end(true);
+  u.onerror = e => end(e.error === "interrupted" || e.error === "canceled");
+  speechSynthesis.speak(u);
+}
+const recWarn = () => {
+  const m = [];
+  if (PWA && !(navigator.mediaDevices && window.MediaRecorder)) m.push("이 브라우저는 녹음을 지원하지 않습니다. 크롬에서 여세요.");
+  if (PWA && !window.speechSynthesis) m.push("이 브라우저는 영어 음성 읽기를 지원하지 않습니다. 크롬에서 여세요.");
+  else if (PWA && voicesReady && !VOICE) m.push("영어 음성이 없습니다. 휴대폰 설정 → 텍스트 음성 변환 → 영어(미국) 음성을 설치하세요. 그 전까지는 질문이 글로 나옵니다.");
+  if (recErr) m.push(recErr);
+  return m.length ? `<p class="warnbox sm">${m.map(esc).join("<br>")}</p>` : "";
+};
+const micMsg = e => e && e.name === "NotAllowedError" ? "마이크가 막혀 있습니다. 주소창 왼쪽 자물쇠(또는 앱 정보) → 권한 → 마이크 허용 후 다시 시작하세요." : "녹음을 시작하지 못했습니다 : " + (e && (e.name || e.message) || e);
+
+/* IndexedDB : chunks(녹음 조각, 시험 중 1초마다) · sets(끝난 시험 = 세트 정보 + 녹음 파일) */
+let IDBP = null;
+const idb = () => IDBP || (IDBP = new Promise((res, rej) => {
+  const r = indexedDB.open("speak15", 1);
+  r.onupgradeneeded = () => { const d = r.result; d.createObjectStore("chunks", { autoIncrement: true }).createIndex("run", "runId"); d.createObjectStore("sets", { keyPath: "id" }); };
+  r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+}));
+const rq = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+const st = async (name, mode) => (await idb()).transaction(name, mode || "readonly").objectStore(name);
+
+const REC = { stream: null, mr: null, pend: [] };
+async function recStart() {
+  if (!(navigator.mediaDevices && window.MediaRecorder)) throw new Error("녹음 미지원 브라우저");
+  if (!REC.stream) REC.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+  const mime = ["audio/mp4;codecs=mp4a.40.2", "audio/mp4", "audio/webm;codecs=opus", "audio/webm"].find(t => MediaRecorder.isTypeSupported(t)) || "";
+  const mr = new MediaRecorder(REC.stream, mime ? { mimeType: mime, audioBitsPerSecond: 48000 } : {});
+  const part = RUN.parts.length + 1, runId = RUN.id; let i = 0;
+  mr.ondataavailable = e => { if (e.data && e.data.size) REC.pend.push(st("chunks", "readwrite").then(s => rq(s.add({ runId, part, i: i++, blob: e.data })))); };
+  mr.start(1000);
+  const m = mr.mimeType || mime || "audio/webm";
+  RUN.parts.push({ part, startMs: now(), mime: m, ext: /mp4/.test(m) ? "m4a" : "webm" });
+  REC.mr = mr; saveRun();
+}
+async function recStop() {
+  const mr = REC.mr;
+  if (mr && mr.state !== "inactive") await new Promise(res => { mr.addEventListener("stop", () => setTimeout(res, 80), { once: true }); mr.stop(); });
+  await Promise.allSettled(REC.pend); REC.pend = []; REC.mr = null;
+  if (REC.stream) { REC.stream.getTracks().forEach(t => t.stop()); REC.stream = null; }
+}
+async function dropChunks(runId) {
+  try { const s = await st("chunks", "readwrite"), keys = await rq(s.index("run").getAllKeys(runId)); keys.forEach(k => s.delete(k)); } catch (e) {}
+}
+async function packRun(r) {
+  const s = await st("chunks"), rows = await rq(s.index("run").getAll(r.id));
+  const set = toSet(r), files = [];
+  set.app = "pwa"; set.voice = VOICE ? VOICE.name : null;
+  set.recParts = (r.parts || []).map(p => {
+    const bl = rows.filter(x => x.part === p.part).sort((a, b) => a.i - b.i).map(x => x.blob);
+    const name = r.id + ((r.parts.length > 1) ? "_" + p.part : "") + "." + p.ext;
+    if (bl.length) files.push({ name, blob: new Blob(bl, { type: p.mime.split(";")[0] }) });
+    return { part: p.part, startMs: p.startMs, file: name, empty: !bl.length };
+  });
+  const rec = { id: r.id, set, files, savedAt: new Date().toISOString(), sentAt: null };
+  await rq((await st("sets", "readwrite")).put(rec));
+  await dropChunks(r.id);
+  return rec;
+}
+async function loadBox() {
+  try { BOX = (await rq((await st("sets")).getAll())).sort((a, b) => String(b.id).localeCompare(String(a.id))); dbState = "정상"; }
+  catch (e) { BOX = []; dbState = "휴대폰 저장소 오류 : " + e.message; }
+}
+const unsent = () => BOX.filter(r => !r.sentAt).length;
+const mb = r => (r.files.reduce((p, f) => p + f.blob.size, 0) / 1048576).toFixed(1);
+function filesOf(r) {
+  const f = r.files.map(x => new File([x.blob], x.name, { type: x.blob.type || "audio/mp4" }));
+  f.push(new File([JSON.stringify(r.set)], r.id + "_set.txt", { type: "text/plain" }));
+  return f;
+}
+async function exportSet(id, how) {
+  const r = BOX.find(x => x.id === id) || (lastPacked && lastPacked.id === id ? lastPacked : null); if (!r) return;
+  const files = filesOf(r);
+  let ok = false;
+  if (how === "share" && navigator.canShare && navigator.canShare({ files })) {
+    try { await navigator.share({ files, title: "스피킹 연습 " + id }); ok = true; } catch (e) { if (e.name !== "AbortError") alert("공유 실패 : " + e.message + "\n'파일로 저장'을 써 주세요."); }
+  } else if (how === "share") { alert("이 기기에서는 파일 공유가 안 됩니다. '파일로 저장'을 써 주세요."); }
+  else {
+    for (const f of files) {
+      const u = URL.createObjectURL(f), a = document.createElement("a");
+      a.href = u; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(u), 60000);
+      await new Promise(res => setTimeout(res, 700));
+    }
+    ok = true;
+  }
+  if (ok) { r.sentAt = new Date().toISOString(); try { await rq((await st("sets", "readwrite")).put(r)); } catch (e) {} await loadBox(); render(); }
+}
+async function delSet(id) { try { await rq((await st("sets", "readwrite")).delete(id)); } catch (e) {} await loadBox(); render(); }
+function renderBox() {
+  return `${nav()}
+  <p class="xs mute">녹음은 이 휴대폰에만 있습니다. 채점 받은 세트는 지워도 됩니다 (결과는 Claude 아티팩트에 남음).</p>
+  <div class="list">${BOX.length ? BOX.map(r => `<section class="card">
+    <div class="top"><b>${esc(r.set.date)} · ${esc(r.set.modeLabel)}</b><span class="pill ${r.sentAt ? "ok" : "wait"}">${r.sentAt ? "내보냄" : "안 보냄"}</span></div>
+    <p class="kv"><span>세트 <b>${esc(r.id)}</b></span><span>${r.set.items.length}문항</span><span>${mmss(r.set.durationSec * 1000)}</span><span>${mb(r)} MB</span></p>
+    <div class="grid2"><button class="btn sec" data-act="save" data-v="${esc(r.id)}">파일로 저장</button><button class="btn sec" data-act="share" data-v="${esc(r.id)}">공유하기</button></div>
+    <button class="btn ghost" data-act="del" data-v="${esc(r.id)}">삭제</button>
+  </section>`).join("") : `<div class="card empty">아직 녹음이 없습니다.</div>`}</div>`;
+}
+
+/* ---------- 이벤트 ---------- */
+function askWake() { try { navigator.wakeLock && navigator.wakeLock.request("screen").then(w => wake = w).catch(() => {}); } catch (e) {} }
+function releaseWake() { try { wake && wake.release(); } catch (e) {} wake = null; }
+let confirmQuit = false;
+$app.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if (!b || b.disabled) return;
+  const act = b.dataset.act, v = b.dataset.v;
+  if (!act) return;
+  if (act === "go") { view = v; saveS(); render(); window.scrollTo(0, 0); }
+  else if (act === "start") { S.mode = v; saveS(); view = "setup"; render(); window.scrollTo(0, 0); }
+  else if (act === "begin") { recErr = ""; startRun(); }
+  else if (act === "resume") {
+    const it = cur(); if (it && it.playing) { it.playing = false; if (it.playEnd == null) it.playAt = null; }   // 재생 중에 끊긴 문항은 다시 듣기부터
+    const go = () => { view = RUN.phase === "reselect" ? "reselect" : "q"; askWake(); render(); };
+    if (PWA) recStart().then(go).catch(e => { recErr = micMsg(e); render(); }); else go();
+  }
+  else if (act === "abandon") { const id = RUN.id; RUN = null; saveRun(); if (PWA) dropChunks(id); render(); }
+  else if (act === "save" || act === "share") exportSet(v, act);
+  else if (act === "del") {
+    if (confirmDel !== v) { confirmDel = v; b.textContent = "한 번 더 누르면 삭제"; return; }
+    confirmDel = null; delSet(v);
+  }
+  else if (act === "preset") { S.preset = v; S.keys = PRESETS[v].keys.slice(); saveS(); render(); }
+  else if (act === "opt") {
+    const o = OPT[v], g = SURVEY.find(x => x.cat === o.cat), on = S.keys.includes(v);
+    if (g.one) { S.keys = S.keys.filter(k => OPT[k].cat !== o.cat); S.keys.push(v); }
+    else S.keys = on ? S.keys.filter(k => k !== v) : [...S.keys, v];
+    S.preset = Object.keys(PRESETS).find(p => PRESETS[p].keys.slice().sort().join() === S.keys.slice().sort().join()) || "custom";
+    saveS(); render();
+  }
+  else if (act === "level") { S.level = +v; saveS(); render(); }
+  else if (act === "toggle") { S[v] = !S[v]; saveS(); render(); }
+  else if (act === "combo") { S.combo = v; saveS(); render(); }
+  else if (act === "focus") { S.focus = v; saveS(); render(); }
+  else if (act === "play") play(false);
+  else if (act === "replay") play(true);
+  else if (act === "next") { confirmQuit = false; next(); }
+  else if (act === "level2") { addTail(v); RUN.phase = "q"; RUN.i++; saveRun(); view = "q"; play(false); }
+  else if (act === "quit") {
+    if (!confirmQuit) { confirmQuit = true; b.textContent = "한 번 더 누르면 그만둡니다 (기록 안 남김)"; return; }
+    confirmQuit = false; stopVoice(); const id = RUN.id; RUN = null; saveRun(); releaseWake(); view = "home";
+    if (PWA) recStop().then(() => dropChunks(id));
+    render();
+  }
+  else if (act === "endhome") { RUN = null; saveRun(); view = "home"; render(); }
+  else if (act === "detail") { detailId = v; view = "detail"; render(); window.scrollTo(0, 0); }
+});
+
+/* ---------- 시작 ---------- */
+if (PWA) {
+  if (window.speechSynthesis) {
+    pickVoice(); speechSynthesis.onvoiceschanged = () => { pickVoice(); if (!["q", "reselect"].includes(view)) render(); };
+    setTimeout(() => { voicesReady = true; pickVoice(); if (!["q", "reselect"].includes(view)) render(); }, 2500);
+  }
+  try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+  (async () => {
+    if (RUN && RUN.phase === "done") { try { lastPacked = await packRun(RUN); } catch (e) {} RUN = null; saveRun(); }
+    await loadBox(); render();
+  })();
+} else if (RUN && RUN.phase === "done") { pending(toSet(RUN)); RUN = null; saveRun(); }
+render();
+if (!PWA) (async () => {
+  const c = window.claude;
+  if (!c || !c.use) { dbState = "claude.ai 밖 → 이 기기에만 보관"; return render(); }
+  db = await c.use("db");
+  if (!db) { dbState = "연결 안 됨 → 이 기기에만 보관"; return render(); }
+  dbState = "연결됨";
+  await syncPending();
+  let timer = setTimeout(() => { dbState = "기록 불러오기 지연"; if (!["q", "reselect"].includes(view)) render(); }, 10000);
+  db.collection("sets").onSnapshot(snap => {
+    clearTimeout(timer);
+    SETS = snap.docs.map(d => d.data()).filter(Boolean).sort((a, b) => String(b.id).localeCompare(String(a.id)));
+    if (!["q", "reselect"].includes(view)) render();
+  }, err => { clearTimeout(timer); dbState = "불러오기 실패 : " + (err.code || err.message); if (!["q", "reselect"].includes(view)) render(); });
+})();
+</script>
+
+</body>
+</html>
